@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Онлайн стримеры</title>
+    <style>
+        /* Стили точь-в-точь как на твоем скрине */
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: system-ui, -apple-system, sans-serif; }
+        body { background: #0e0e10; display: flex; justify-content: center; padding: 20px; }
+        .container { max-width: 800px; width: 100%; }
+        .header { color: #efeff1; font-size: 24px; font-weight: 700; margin-bottom: 20px; display: flex; justify-content: space-between; }
+        .header span { background: #9147ff; padding: 2px 12px; border-radius: 20px; font-size: 14px; }
+        .streamer-card {
+            background: #1f1f23;
+            border-radius: 8px;
+            padding: 12px 16px;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            color: #efeff1;
+            cursor: pointer;
+            transition: 0.2s;
+            border-left: 4px solid #9147ff;
+        }
+        .streamer-card:hover { background: #2a2a2e; }
+        .rank { font-weight: 700; color: #adadb8; width: 30px; font-size: 18px; }
+        .avatar { width: 50px; height: 50px; border-radius: 50%; background: #3a3a3e; flex-shrink: 0; overflow: hidden; }
+        .avatar img { width: 100%; height: 100%; object-fit: cover; }
+        .info { flex: 1; }
+        .name { font-weight: 600; font-size: 16px; }
+        .name small { font-weight: 400; color: #adadb8; font-size: 13px; margin-left: 8px; }
+        .game { color: #adadb8; font-size: 14px; margin-top: 2px; }
+        .stats { text-align: right; flex-shrink: 0; }
+        .viewers { color: #adadb8; font-size: 14px; }
+        .live-time { color: #9147ff; font-size: 13px; font-weight: 500; }
+        .search-bar {
+            background: #18181b;
+            padding: 12px 16px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            color: #adadb8;
+            display: flex;
+            justify-content: space-between;
+            border: 1px solid #2a2a2e;
+        }
+        .badge { background: #9147ff; color: white; padding: 2px 10px; border-radius: 12px; font-size: 12px; }
+        .footer-link { color: #9147ff; text-align: right; margin-top: 12px; font-size: 14px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Шапка как на скрине -->
+        <div class="header">
+            <div>В ЗОИРЕ СЕЙЧАС <span>26</span></div>
+            <div style="font-size:14px; font-weight:400;">Стримеры</div>
+        </div>
+
+        <!-- Поиск -->
+        <div class="search-bar">
+            <span>🔍 Поиск по имени, рубрике, описанию...</span>
+            <span>По номеру (по умолчанию) <span class="badge">+ Предложить VTuber</span></span>
+        </div>
+
+        <!-- Список стримеров (загружается сюда) -->
+        <div id="streamerList"></div>
+    </div>
+
+    <script>
+        // ⚠️ ВСТАВЬ СВОИ ДАННЫЕ ОТ TWITCH ⚠️
+        const CLIENT_ID = 'ТВОЙ_CLIENT_ID'; // Например: 'abc123def456'
+        const ACCESS_TOKEN = 'ТВОЙ_ACCESS_TOKEN'; // Получить тут: https://twitchtokengenerator.com/
+
+        // 🔥 СПИСОК ТВОИХ СТРИМЕРОВ (пиши их логины)
+        const STREAMERS = [
+            'scarleycrystal',
+            'trewoga',
+            'bredinaplay',
+            'nitablade',
+            'morgimori',
+            'mrdentl'
+        ];
+
+        async function loadStreamers() {
+            const list = document.getElementById('streamerList');
+            list.innerHTML = '<p style="color:white;">Загрузка...</p>';
+
+            try {
+                // 1. Получаем ID стримеров по логинам
+                const userRes = await fetch(`https://api.twitch.tv/helix/users?login=${STREAMERS.join('&login=')}`, {
+                    headers: {
+                        'Client-ID': CLIENT_ID,
+                        'Authorization': `Bearer ${ACCESS_TOKEN}`
+                    }
+                });
+                const userData = await userRes.json();
+                const userIds = userData.data.map(u => u.id);
+
+                // 2. Получаем информацию о стримах (кто в онлайне)
+                const streamRes = await fetch(`https://api.twitch.tv/helix/streams?user_id=${userIds.join('&user_id=')}`, {
+                    headers: {
+                        'Client-ID': CLIENT_ID,
+                        'Authorization': `Bearer ${ACCESS_TOKEN}`
+                    }
+                });
+                const streamData = await streamRes.json();
+
+                // 3. Сортируем по зрителям (как на скрине)
+                const online = streamData.data.sort((a, b) => b.viewer_count - a.viewer_count);
+
+                if (online.length === 0) {
+                    list.innerHTML = '<p style="color:#adadb8;">Сейчас никто не стримит из списка 😴</p>';
+                    return;
+                }
+
+                // 4. Рендерим карточки
+                let html = '';
+                online.forEach((stream, index) => {
+                    const started = new Date(stream.started_at);
+                    const now = new Date();
+                    const diffMs = now - started;
+                    const diffHrs = Math.floor(diffMs / (1000 * 60 * 60));
+                    const diffMins = Math.floor((diffMs % (1000 * 60 * 60)) / (1000 * 60));
+                    const timeStr = `${diffHrs} ч ${diffMins} мин`;
+
+                    // Аватарка (используем фото пользователя)
+                    const user = userData.data.find(u => u.id === stream.user_id);
+                    const avatarUrl = user ? user.profile_image_url : '';
+
+                    html += `
+                        <div class="streamer-card" onclick="window.open('https://twitch.tv/${stream.user_login}', '_blank')">
+                            <div class="rank">${index + 1}</div>
+                            <div class="avatar"><img src="${avatarUrl}" alt="${stream.user_login}"></div>
+                            <div class="info">
+                                <div class="name">${stream.user_login} <small>${stream.user_name}</small></div>
+                                <div class="game">🎮 ${stream.game_name}</div>
+                            </div>
+                            <div class="stats">
+                                <div class="viewers">👁️ ${stream.viewer_count}</div>
+                                <div class="live-time">🟣 идет ${timeStr}</div>
+                            </div>
+                        </div>
+                    `;
+                });
+
+                list.innerHTML = html;
+
+            } catch (error) {
+                list.innerHTML = `<p style="color:red;">Ошибка загрузки: ${error.message}. Проверь CLIENT_ID и TOKEN.</p>`;
+                console.error(error);
+            }
+        }
+
+        // Запускаем
+        loadStreamers();
+        // Обновляем каждые 2 минуты (чтобы данные были свежие)
+        setInterval(loadStreamers, 120000);
+    </script>
+</body>
+</html>
