@@ -32,10 +32,10 @@ app.get('/', (req, res) => {
       <style>
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: system-ui, -apple-system, sans-serif; }
         body { 
-          background: #0e0e10; 
+          background: #FFFFFF; 
           display: flex; 
           justify-content: center; 
-          padding: 20px; 
+          padding: 16px; 
           overflow: hidden;
         }
         
@@ -46,17 +46,18 @@ app.get('/', (req, res) => {
         
         /* Шапка */
         .header { 
-          color: #efeff1; 
-          font-size: 24px; 
+          color: #000000; 
+          font-size: 22px; 
           font-weight: 700; 
-          margin-bottom: 20px; 
+          margin-bottom: 16px; 
           display: flex; 
           justify-content: space-between; 
           align-items: center; 
         }
         .header span { 
           background: #9147ff; 
-          padding: 2px 12px; 
+          color: white;
+          padding: 2px 14px; 
           border-radius: 20px; 
           font-size: 14px; 
         }
@@ -64,10 +65,11 @@ app.get('/', (req, res) => {
           background: #9147ff; 
           color: white; 
           border: none; 
-          padding: 6px 16px;
+          padding: 6px 18px;
           border-radius: 8px; 
           cursor: pointer; 
           font-weight: 600; 
+          font-size: 13px;
           transition: 0.2s;
         }
         .refresh-btn:hover { background: #772ce8; }
@@ -77,19 +79,19 @@ app.get('/', (req, res) => {
           overflow-x: auto;
           overflow-y: hidden;
           white-space: nowrap;
-          padding: 10px 0 20px 0;
+          padding: 8px 0 16px 0;
           scroll-behavior: smooth;
           -webkit-overflow-scrolling: touch;
           display: flex;
-          gap: 16px;
+          gap: 14px;
         }
         
-        /* Скрываем скроллбар для красоты (но скролл работает) */
+        /* Скрываем скроллбар для красоты */
         .scroll-container::-webkit-scrollbar {
-          height: 6px;
+          height: 4px;
         }
         .scroll-container::-webkit-scrollbar-track {
-          background: #1f1f23;
+          background: #f0f0f0;
           border-radius: 10px;
         }
         .scroll-container::-webkit-scrollbar-thumb {
@@ -100,29 +102,30 @@ app.get('/', (req, res) => {
         /* Карточка стримера — вертикальная */
         .streamer-card {
           display: inline-block;
-          width: 220px;
-          min-width: 220px;
-          background: #1f1f23;
+          width: 200px;
+          min-width: 200px;
+          background: #FFFFFF;
           border-radius: 12px;
           overflow: hidden;
           cursor: pointer;
           transition: 0.3s;
-          border: 2px solid transparent;
+          border: 1px solid #e8e8e8;
           vertical-align: top;
           white-space: normal;
           margin-right: 4px;
+          box-shadow: 0 2px 8px rgba(0,0,0,0.04);
         }
         .streamer-card:hover {
-          transform: translateY(-6px);
+          transform: translateY(-4px);
           border-color: #9147ff;
-          box-shadow: 0 8px 30px rgba(145, 71, 255, 0.3);
+          box-shadow: 0 8px 25px rgba(145, 71, 255, 0.15);
         }
         
         /* Аватарка — квадрат 200x200 */
         .avatar {
           width: 100%;
           height: 200px;
-          background: #2a2a2e;
+          background: #f5f5f5;
           overflow: hidden;
           flex-shrink: 0;
         }
@@ -135,39 +138,39 @@ app.get('/', (req, res) => {
         
         /* Информация под аватаркой */
         .info {
-          padding: 12px 14px 16px;
-          background: #1f1f23;
+          padding: 10px 12px 14px;
+          background: #FFFFFF;
         }
         .name {
           font-weight: 700;
-          font-size: 16px;
-          color: #efeff1;
+          font-size: 15px;
+          color: #000000;
           white-space: nowrap;
           overflow: hidden;
           text-overflow: ellipsis;
         }
         .name small {
           font-weight: 400;
-          color: #adadb8;
+          color: #888;
           font-size: 12px;
           margin-left: 4px;
         }
         .game {
-          color: #adadb8;
+          color: #9147ff;
           font-size: 13px;
-          margin-top: 4px;
+          margin-top: 3px;
           white-space: nowrap;
           overflow: hidden;
           text-overflow: ellipsis;
         }
         .stats {
-          margin-top: 8px;
+          margin-top: 6px;
           display: flex;
           justify-content: space-between;
           align-items: center;
         }
         .viewers {
-          color: #adadb8;
+          color: #666;
           font-size: 13px;
         }
         .live-time {
@@ -177,31 +180,31 @@ app.get('/', (req, res) => {
         }
         
         /* Заглушки */
-        .loading { color: #adadb8; text-align: center; padding: 40px; }
+        .loading { color: #666; text-align: center; padding: 40px; }
         .error { color: #ff6b6b; text-align: center; padding: 40px; }
-        .offline { color: #adadb8; text-align: center; padding: 40px; font-size: 18px; }
+        .offline { color: #666; text-align: center; padding: 40px; font-size: 18px; }
         .footer { 
-          margin-top: 20px; 
+          margin-top: 16px; 
           text-align: center; 
-          color: #adadb8; 
+          color: #aaa; 
           font-size: 12px; 
         }
         
         /* Ранг (номер) */
         .rank-badge {
           position: absolute;
-          top: 8px;
-          left: 8px;
+          top: 6px;
+          left: 6px;
           background: #9147ff;
           color: white;
-          width: 28px;
-          height: 28px;
+          width: 26px;
+          height: 26px;
           border-radius: 50%;
           display: flex;
           align-items: center;
           justify-content: center;
           font-weight: 700;
-          font-size: 14px;
+          font-size: 13px;
           z-index: 2;
         }
         .card-wrapper {
