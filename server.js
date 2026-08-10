@@ -31,47 +31,186 @@ app.get('/', (req, res) => {
       <title>Онлайн стримеры</title>
       <style>
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: system-ui, -apple-system, sans-serif; }
-        body { background: #FFFFFF; display: flex; justify-content: center; padding: 10px; }
-        .container { max-width: 800px; width: 100%; }
-        .header { color: #000000; font-size: 20px; font-weight: 700; margin-bottom: 15px; display: flex; justify-content: space-between; align-items: center; }
-        .header span { background: #9147ff; color: white; padding: 2px 12px; border-radius: 20px; font-size: 14px; }
-        
-        .streamer-card {
-          background: #FFFFFF; border-radius: 12px; padding: 16px; margin-bottom: 10px;
-          display: flex; align-items: center; gap: 20px; color: #000000;
-          cursor: pointer; transition: 0.2s; border: 1px solid #e0e0e0;
+        body { 
+          background: #0e0e10; 
+          display: flex; 
+          justify-content: center; 
+          padding: 20px; 
+          overflow: hidden;
         }
-        .streamer-card:hover { background: #f5f5f5; }
         
-        .rank { font-weight: 700; color: #9147ff; width: 30px; font-size: 18px; }
-        
-        .avatar { 
-          width: 200px; 
-          height: 200px; 
-          flex-shrink: 0; 
-          overflow: hidden; 
-          border-radius: 8px; 
-          background: #f0f0f0;
+        .container { 
+          max-width: 1200px; 
+          width: 100%; 
         }
-        .avatar img { width: 100%; height: 100%; object-fit: cover; }
         
-        .info { flex: 1; }
-        .name { font-weight: 600; font-size: 18px; color: #000000; }
-        .name small { font-weight: 400; color: #666; font-size: 14px; margin-left: 8px; }
-        .game { color: #9147ff; font-size: 15px; margin-top: 4px; }
-        .stats { text-align: right; flex-shrink: 0; }
-        .viewers { color: #666; font-size: 14px; }
-        .live-time { color: #9147ff; font-size: 13px; font-weight: 500; }
-        
-        .loading { color: #666; text-align: center; padding: 40px; }
-        .error { color: #ff6b6b; text-align: center; padding: 40px; }
-        .offline { color: #666; text-align: center; padding: 40px; font-size: 18px; }
+        /* Шапка */
+        .header { 
+          color: #efeff1; 
+          font-size: 24px; 
+          font-weight: 700; 
+          margin-bottom: 20px; 
+          display: flex; 
+          justify-content: space-between; 
+          align-items: center; 
+        }
+        .header span { 
+          background: #9147ff; 
+          padding: 2px 12px; 
+          border-radius: 20px; 
+          font-size: 14px; 
+        }
         .refresh-btn {
-          background: #9147ff; color: white; border: none; padding: 6px 16px;
-          border-radius: 8px; cursor: pointer; font-weight: 600; transition: 0.2s;
+          background: #9147ff; 
+          color: white; 
+          border: none; 
+          padding: 6px 16px;
+          border-radius: 8px; 
+          cursor: pointer; 
+          font-weight: 600; 
+          transition: 0.2s;
         }
         .refresh-btn:hover { background: #772ce8; }
-        .footer { margin-top: 20px; text-align: center; color: #999; font-size: 12px; }
+        
+        /* Горизонтальный скролл-контейнер */
+        .scroll-container {
+          overflow-x: auto;
+          overflow-y: hidden;
+          white-space: nowrap;
+          padding: 10px 0 20px 0;
+          scroll-behavior: smooth;
+          -webkit-overflow-scrolling: touch;
+          display: flex;
+          gap: 16px;
+        }
+        
+        /* Скрываем скроллбар для красоты (но скролл работает) */
+        .scroll-container::-webkit-scrollbar {
+          height: 6px;
+        }
+        .scroll-container::-webkit-scrollbar-track {
+          background: #1f1f23;
+          border-radius: 10px;
+        }
+        .scroll-container::-webkit-scrollbar-thumb {
+          background: #9147ff;
+          border-radius: 10px;
+        }
+        
+        /* Карточка стримера — вертикальная */
+        .streamer-card {
+          display: inline-block;
+          width: 220px;
+          min-width: 220px;
+          background: #1f1f23;
+          border-radius: 12px;
+          overflow: hidden;
+          cursor: pointer;
+          transition: 0.3s;
+          border: 2px solid transparent;
+          vertical-align: top;
+          white-space: normal;
+          margin-right: 4px;
+        }
+        .streamer-card:hover {
+          transform: translateY(-6px);
+          border-color: #9147ff;
+          box-shadow: 0 8px 30px rgba(145, 71, 255, 0.3);
+        }
+        
+        /* Аватарка — квадрат 200x200 */
+        .avatar {
+          width: 100%;
+          height: 200px;
+          background: #2a2a2e;
+          overflow: hidden;
+          flex-shrink: 0;
+        }
+        .avatar img {
+          width: 100%;
+          height: 100%;
+          object-fit: cover;
+          display: block;
+        }
+        
+        /* Информация под аватаркой */
+        .info {
+          padding: 12px 14px 16px;
+          background: #1f1f23;
+        }
+        .name {
+          font-weight: 700;
+          font-size: 16px;
+          color: #efeff1;
+          white-space: nowrap;
+          overflow: hidden;
+          text-overflow: ellipsis;
+        }
+        .name small {
+          font-weight: 400;
+          color: #adadb8;
+          font-size: 12px;
+          margin-left: 4px;
+        }
+        .game {
+          color: #adadb8;
+          font-size: 13px;
+          margin-top: 4px;
+          white-space: nowrap;
+          overflow: hidden;
+          text-overflow: ellipsis;
+        }
+        .stats {
+          margin-top: 8px;
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+        }
+        .viewers {
+          color: #adadb8;
+          font-size: 13px;
+        }
+        .live-time {
+          color: #9147ff;
+          font-size: 12px;
+          font-weight: 500;
+        }
+        
+        /* Заглушки */
+        .loading { color: #adadb8; text-align: center; padding: 40px; }
+        .error { color: #ff6b6b; text-align: center; padding: 40px; }
+        .offline { color: #adadb8; text-align: center; padding: 40px; font-size: 18px; }
+        .footer { 
+          margin-top: 20px; 
+          text-align: center; 
+          color: #adadb8; 
+          font-size: 12px; 
+        }
+        
+        /* Ранг (номер) */
+        .rank-badge {
+          position: absolute;
+          top: 8px;
+          left: 8px;
+          background: #9147ff;
+          color: white;
+          width: 28px;
+          height: 28px;
+          border-radius: 50%;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          font-weight: 700;
+          font-size: 14px;
+          z-index: 2;
+        }
+        .card-wrapper {
+          position: relative;
+          display: inline-block;
+          vertical-align: top;
+          white-space: normal;
+          margin-right: 4px;
+        }
       </style>
     </head>
     <body>
@@ -80,14 +219,19 @@ app.get('/', (req, res) => {
           <div>🟣 В ЭФИРЕ СЕЙЧАС <span id="count">0</span></div>
           <button class="refresh-btn" onclick="loadStreamers()">⟳ Обновить</button>
         </div>
-        <!-- 👇 СТРОКА ПОИСКА УДАЛЕНА! -->
-        <div id="streamerList"><div class="loading">⏳ Загрузка...</div></div>
+        
+        <!-- Горизонтальный скролл-контейнер -->
+        <div class="scroll-container" id="streamerList">
+          <div class="loading">⏳ Загрузка...</div>
+        </div>
+        
         <div class="footer">Данные обновляются автоматически каждые 2 минуты</div>
       </div>
+      
       <script>
         async function loadStreamers() {
-          const list = document.getElementById('streamerList');
-          list.innerHTML = '<div class="loading">⏳ Загрузка...</div>';
+          const container = document.getElementById('streamerList');
+          container.innerHTML = '<div class="loading">⏳ Загрузка...</div>';
           
           try {
             const res = await fetch('/api/streamers');
@@ -97,7 +241,7 @@ app.get('/', (req, res) => {
             document.getElementById('count').textContent = data.length;
             
             if (data.length === 0) {
-              list.innerHTML = '<div class="offline">😴 Сейчас никто не стримит из списка</div>';
+              container.innerHTML = '<div class="offline">😴 Сейчас никто не стримит из списка</div>';
               return;
             }
             
@@ -105,23 +249,28 @@ app.get('/', (req, res) => {
             data.forEach((stream, index) => {
               const viewerText = stream.viewers > 0 ? \`👁️ \${stream.viewers}\` : '👁️ 0';
               html += \`
-                <div class="streamer-card" onclick="window.open('https://twitch.tv/\${stream.login}', '_blank')">
-                  <div class="rank">\${index + 1}</div>
-                  <div class="avatar"><img src="\${stream.avatar}" alt="\${stream.login}" onerror="this.src='https://static-cdn.jtvnw.net/user-default-pictures-uv/75305d54-c7cc-40d1-bb9c-91fbe4b5d9d0-profile_image-50x50.png'"></div>
-                  <div class="info">
-                    <div class="name">\${stream.login} <small>\${stream.display_name}</small></div>
-                    <div class="game">🎮 \${stream.game || 'Не указана'}</div>
-                  </div>
-                  <div class="stats">
-                    <div class="viewers">\${viewerText}</div>
-                    <div class="live-time">🟣 идет \${stream.time}</div>
+                <div class="card-wrapper">
+                  <div class="rank-badge">\${index + 1}</div>
+                  <div class="streamer-card" onclick="window.open('https://twitch.tv/\${stream.login}', '_blank')">
+                    <div class="avatar">
+                      <img src="\${stream.avatar}" alt="\${stream.login}" onerror="this.src='https://static-cdn.jtvnw.net/user-default-pictures-uv/75305d54-c7cc-40d1-bb9c-91fbe4b5d9d0-profile_image-50x50.png'">
+                    </div>
+                    <div class="info">
+                      <div class="name">\${stream.login} <small>\${stream.display_name}</small></div>
+                      <div class="game">🎮 \${stream.game || 'Не указана'}</div>
+                      <div class="stats">
+                        <span class="viewers">\${viewerText}</span>
+                        <span class="live-time">🟣 \${stream.time}</span>
+                      </div>
+                    </div>
                   </div>
                 </div>
               \`;
             });
-            list.innerHTML = html;
+            
+            container.innerHTML = html;
           } catch (e) {
-            list.innerHTML = \`<div class="error">❌ Ошибка: \${e.message}<br><small>Проверь токен и список стримеров</small></div>\`;
+            container.innerHTML = \`<div class="error">❌ Ошибка: \${e.message}</div>\`;
             console.error(e);
           }
         }
