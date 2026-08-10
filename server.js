@@ -10,13 +10,14 @@ const CLIENT_ID = 'ib6mkjyyyrw1v3rtjchrorzlhjhb85';  // Твой Client ID
 const ACCESS_TOKEN = 'ibk2h50iauoabwnunpg5tgfcnte2cp';  // Твой Access Token
 
 // ============================================
-// 👇 ТОЛЬКО ЭТИ ТРИ СТРИМЕРА (остальные удалены)
+// 👇 ТОЛЬКО ТВОИ СТРИМЕРЫ
 // ============================================
 const STREAMERS = [
   'foksyq',
   'theiathedraco',
   'honya_vt',
-  'dmitry_bale'
+  'supercrastan',
+  'ej_sa'
 ];
 // ============================================
 
@@ -30,40 +31,47 @@ app.get('/', (req, res) => {
       <title>Онлайн стримеры</title>
       <style>
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: system-ui, -apple-system, sans-serif; }
-        body { background: #0e0e10; display: flex; justify-content: center; padding: 20px; }
+        body { background: #FFFFFF; display: flex; justify-content: center; padding: 10px; }
         .container { max-width: 800px; width: 100%; }
-        .header { color: #efeff1; font-size: 24px; font-weight: 700; margin-bottom: 20px; display: flex; justify-content: space-between; align-items: center; }
-        .header span { background: #9147ff; padding: 2px 12px; border-radius: 20px; font-size: 14px; }
+        .header { color: #000000; font-size: 20px; font-weight: 700; margin-bottom: 15px; display: flex; justify-content: space-between; align-items: center; }
+        .header span { background: #9147ff; color: white; padding: 2px 12px; border-radius: 20px; font-size: 14px; }
+        
         .streamer-card {
-          background: #1f1f23; border-radius: 8px; padding: 12px 16px; margin-bottom: 8px;
-          display: flex; align-items: center; gap: 15px; color: #efeff1;
-          cursor: pointer; transition: 0.2s; border-left: 4px solid #9147ff;
+          background: #FFFFFF; border-radius: 12px; padding: 16px; margin-bottom: 10px;
+          display: flex; align-items: center; gap: 20px; color: #000000;
+          cursor: pointer; transition: 0.2s; border: 1px solid #e0e0e0;
         }
-        .streamer-card:hover { background: #2a2a2e; transform: translateX(4px); }
-        .rank { font-weight: 700; color: #adadb8; width: 30px; font-size: 18px; }
-        .avatar { width: 50px; height: 50px; border-radius: 50%; background: #3a3a3e; overflow: hidden; flex-shrink: 0; }
+        .streamer-card:hover { background: #f5f5f5; }
+        
+        .rank { font-weight: 700; color: #9147ff; width: 30px; font-size: 18px; }
+        
+        .avatar { 
+          width: 200px; 
+          height: 200px; 
+          flex-shrink: 0; 
+          overflow: hidden; 
+          border-radius: 8px; 
+          background: #f0f0f0;
+        }
         .avatar img { width: 100%; height: 100%; object-fit: cover; }
+        
         .info { flex: 1; }
-        .name { font-weight: 600; font-size: 16px; }
-        .name small { font-weight: 400; color: #adadb8; font-size: 13px; margin-left: 8px; }
-        .game { color: #adadb8; font-size: 14px; margin-top: 2px; }
+        .name { font-weight: 600; font-size: 18px; color: #000000; }
+        .name small { font-weight: 400; color: #666; font-size: 14px; margin-left: 8px; }
+        .game { color: #9147ff; font-size: 15px; margin-top: 4px; }
         .stats { text-align: right; flex-shrink: 0; }
-        .viewers { color: #adadb8; font-size: 14px; }
+        .viewers { color: #666; font-size: 14px; }
         .live-time { color: #9147ff; font-size: 13px; font-weight: 500; }
-        .search-bar {
-          background: #18181b; padding: 12px 16px; border-radius: 8px; margin-bottom: 20px;
-          color: #adadb8; display: flex; justify-content: space-between; border: 1px solid #2a2a2e;
-        }
-        .badge { background: #9147ff; color: white; padding: 2px 10px; border-radius: 12px; font-size: 12px; }
-        .loading { color: #adadb8; text-align: center; padding: 40px; }
+        
+        .loading { color: #666; text-align: center; padding: 40px; }
         .error { color: #ff6b6b; text-align: center; padding: 40px; }
-        .offline { color: #adadb8; text-align: center; padding: 40px; font-size: 18px; }
+        .offline { color: #666; text-align: center; padding: 40px; font-size: 18px; }
         .refresh-btn {
-          background: #9147ff; color: white; border: none; padding: 8px 20px;
+          background: #9147ff; color: white; border: none; padding: 6px 16px;
           border-radius: 8px; cursor: pointer; font-weight: 600; transition: 0.2s;
         }
         .refresh-btn:hover { background: #772ce8; }
-        .footer { margin-top: 20px; text-align: center; color: #adadb8; font-size: 12px; }
+        .footer { margin-top: 20px; text-align: center; color: #999; font-size: 12px; }
       </style>
     </head>
     <body>
@@ -72,10 +80,7 @@ app.get('/', (req, res) => {
           <div>🟣 В ЭФИРЕ СЕЙЧАС <span id="count">0</span></div>
           <button class="refresh-btn" onclick="loadStreamers()">⟳ Обновить</button>
         </div>
-        <div class="search-bar">
-          <span>🔍 Стримеры из списка</span>
-          <span>Сортировка по зрителям</span>
-        </div>
+        <!-- 👇 СТРОКА ПОИСКА УДАЛЕНА! -->
         <div id="streamerList"><div class="loading">⏳ Загрузка...</div></div>
         <div class="footer">Данные обновляются автоматически каждые 2 минуты</div>
       </div>
@@ -131,7 +136,6 @@ app.get('/', (req, res) => {
 
 app.get('/api/streamers', async (req, res) => {
   try {
-    // Получаем ID пользователей
     const userRes = await axios.get(
       `https://api.twitch.tv/helix/users?login=${STREAMERS.join('&login=')}`,
       { headers: { 'Client-ID': CLIENT_ID, 'Authorization': `Bearer ${ACCESS_TOKEN}` } }
@@ -139,13 +143,11 @@ app.get('/api/streamers', async (req, res) => {
     const users = userRes.data.data;
     const userIds = users.map(u => u.id);
 
-    // Получаем информацию о стримах
     const streamRes = await axios.get(
       `https://api.twitch.tv/helix/streams?user_id=${userIds.join('&user_id=')}`,
       { headers: { 'Client-ID': CLIENT_ID, 'Authorization': `Bearer ${ACCESS_TOKEN}` } }
     );
 
-    // Сортируем по зрителям (по убыванию)
     const online = streamRes.data.data.sort((a, b) => b.viewer_count - a.viewer_count);
 
     const result = online.map(stream => {
