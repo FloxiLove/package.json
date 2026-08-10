@@ -16,6 +16,7 @@ const STREAMERS = [
   'foksyq',
   'theiathedraco',
   'honya_vt'
+  'dmitry_bale'
 ];
 // ============================================
 
