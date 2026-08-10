@@ -15,7 +15,7 @@ const ACCESS_TOKEN = 'ibk2h50iauoabwnunpg5tgfcnte2cp';  // Твой Access Token
 const STREAMERS = [
   'foksyq',
   'theiathedraco',
-  'honya_vt'
+  'honya_vt',
   'dmitry_bale'
 ];
 // ============================================
