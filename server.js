@@ -30,6 +30,7 @@ const STREAMERS = [
   'amity_weiss',
   'ruf_alester',
   'mikichvt',
+  'k0tava'
 ];
 // ============================================
 
