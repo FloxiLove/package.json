@@ -30,12 +30,6 @@ const STREAMERS = [
   'amity_weiss',
   'ruf_alester',
   'mikichvt',
-  'hotbeatstv',
-  'hard_music_tv',
-  'violit_tv',
-  'egorkreed',
-  'ishowspeed',
-  'ironmouse'
 ];
 // ============================================
 
