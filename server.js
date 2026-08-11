@@ -29,7 +29,8 @@ const STREAMERS = [
   'camiavt',
   'amity_weiss',
   'ruf_alester',
-  'mikichvt'
+  'mikichvt',
+  'hotbeatstv'
 ];
 // ============================================
 
@@ -56,7 +57,6 @@ app.get('/', (req, res) => {
           width: 100%; 
         }
         
-        /* Шапка */
         .header { 
           color: #000000; 
           font-size: 22px; 
@@ -86,7 +86,6 @@ app.get('/', (req, res) => {
         }
         .refresh-btn:hover { background: #772ce8; }
         
-        /* Горизонтальный скролл-контейнер */
         .scroll-container {
           overflow-x: auto;
           overflow-y: hidden;
@@ -98,7 +97,6 @@ app.get('/', (req, res) => {
           gap: 14px;
         }
         
-        /* Скрываем скроллбар для красоты */
         .scroll-container::-webkit-scrollbar {
           height: 4px;
         }
@@ -111,7 +109,6 @@ app.get('/', (req, res) => {
           border-radius: 10px;
         }
         
-        /* Карточка стримера — вертикальная */
         .streamer-card {
           display: inline-block;
           width: 200px;
@@ -133,7 +130,6 @@ app.get('/', (req, res) => {
           box-shadow: 0 8px 25px rgba(145, 71, 255, 0.15);
         }
         
-        /* Аватарка — квадрат 200x200 */
         .avatar {
           width: 100%;
           height: 200px;
@@ -148,7 +144,6 @@ app.get('/', (req, res) => {
           display: block;
         }
         
-        /* Информация под аватаркой */
         .info {
           padding: 10px 12px 14px;
           background: #FFFFFF;
@@ -191,7 +186,6 @@ app.get('/', (req, res) => {
           font-weight: 500;
         }
         
-        /* Заглушки */
         .loading { color: #666; text-align: center; padding: 40px; }
         .error { color: #ff6b6b; text-align: center; padding: 40px; }
         .offline { color: #666; text-align: center; padding: 40px; font-size: 18px; }
@@ -202,23 +196,42 @@ app.get('/', (req, res) => {
           font-size: 12px; 
         }
         
-        /* Ранг (номер) */
-        .rank-badge {
+        /* ============================================
+           👇 НОВЫЙ БЕЙДЖ "ЭФИР" вместо нумерации
+           ============================================ */
+        .live-badge {
           position: absolute;
-          top: 6px;
-          left: 6px;
-          background: #9147ff;
+          top: 8px;
+          left: 8px;
+          background: #ff0040;
           color: white;
-          width: 26px;
-          height: 26px;
-          border-radius: 50%;
+          padding: 4px 12px 4px 10px;
+          border-radius: 20px;
+          font-weight: 700;
+          font-size: 12px;
+          letter-spacing: 0.5px;
+          z-index: 2;
           display: flex;
           align-items: center;
-          justify-content: center;
-          font-weight: 700;
-          font-size: 13px;
-          z-index: 2;
+          gap: 6px;
+          box-shadow: 0 2px 12px rgba(255, 0, 64, 0.4);
+          text-transform: uppercase;
         }
+        /* Красная точка */
+        .live-badge::before {
+          content: "";
+          display: inline-block;
+          width: 8px;
+          height: 8px;
+          background: white;
+          border-radius: 50%;
+          animation: pulse-dot 1.5s ease-in-out infinite;
+        }
+        @keyframes pulse-dot {
+          0%, 100% { opacity: 1; transform: scale(1); }
+          50% { opacity: 0.4; transform: scale(0.7); }
+        }
+        
         .card-wrapper {
           position: relative;
           display: inline-block;
@@ -235,7 +248,6 @@ app.get('/', (req, res) => {
           <button class="refresh-btn" onclick="loadStreamers()">⟳ Обновить</button>
         </div>
         
-        <!-- Горизонтальный скролл-контейнер -->
         <div class="scroll-container" id="streamerList">
           <div class="loading">⏳ Загрузка...</div>
         </div>
@@ -261,11 +273,11 @@ app.get('/', (req, res) => {
             }
             
             let html = '';
-            data.forEach((stream, index) => {
+            data.forEach((stream) => {
               const viewerText = stream.viewers > 0 ? \`👁️ \${stream.viewers}\` : '👁️ 0';
               html += \`
                 <div class="card-wrapper">
-                  <div class="rank-badge">\${index + 1}</div>
+                  <div class="live-badge">ЭФИР</div>
                   <div class="streamer-card" onclick="window.open('https://twitch.tv/\${stream.login}', '_blank')">
                     <div class="avatar">
                       <img src="\${stream.avatar}" alt="\${stream.login}" onerror="this.src='https://static-cdn.jtvnw.net/user-default-pictures-uv/75305d54-c7cc-40d1-bb9c-91fbe4b5d9d0-profile_image-50x50.png'">
