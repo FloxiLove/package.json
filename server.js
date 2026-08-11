@@ -16,8 +16,20 @@ const STREAMERS = [
   'foksyq',
   'theiathedraco',
   'honya_vt',
-  'supercrastan',
-  'ej_sa'
+  'nezvano',
+  'makarunee',
+  'awiona',
+  'ezhanna',
+  'myakoto_',
+  'sSharkShoals',
+  'cerubervt',
+  'libertina98',
+  'vasyato4ka',
+  'mordch',
+  'camiavt',
+  'amity_weiss',
+  'ruf_alester',
+  'mikichvt'
 ];
 // ============================================
 
